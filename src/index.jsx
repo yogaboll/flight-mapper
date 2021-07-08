@@ -1,18 +1,16 @@
 import 'babel-polyfill';
+import createBrowserHistory from 'history/createBrowserHistory';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import { Provider } from 'react-redux';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import { routerForBrowser } from 'redux-little-router';
-import createBrowserHistory from 'history/createBrowserHistory';
-import ReduxThunk from 'redux-thunk';
 // import logger from 'redux-logger';
-
-import './stylesheets/styles.scss';
-import './stylesheets/map.scss';
-
-import reducers from './reducers';
+import ReduxThunk from 'redux-thunk';
 import App from './components/App';
+import reducers from './reducers';
+import './stylesheets/map.scss';
+import './stylesheets/styles.scss';
 import checkIfMobile from './utils/checkIfMobile';
 
 const history = createBrowserHistory();
@@ -57,9 +55,12 @@ const { reducer, middleware, enhancer } = routerForBrowser({
   routes
 });
 
+const country = window.COUNTRY;
+delete window.COUNTRY;
+
 const store = createStore(
   combineReducers({ ...reducers, router: reducer }),
-  { isMobile: checkIfMobile() },
+  { isMobile: checkIfMobile(), country },
   compose(
     enhancer,
     applyMiddleware(ReduxThunk, middleware)

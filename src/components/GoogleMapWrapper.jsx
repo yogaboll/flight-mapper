@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getRoutes, getAirports, getSectors, getBrighterColor } from '../selectors';
+import { getAirports, getBrighterColor, getRoutes, getSectors } from '../selectors';
 import GoogleMap from './GoogleMap';
 
 class GoogleMapWrapper extends Component {
@@ -46,10 +46,21 @@ class GoogleMapWrapper extends Component {
   }
 
   render() {
-    const { routes, airports, sectors, mapType, label, routeColor, pointColor, map } = this.props;
+    const {
+      routes,
+      airports,
+      sectors,
+      mapType,
+      label,
+      routeColor,
+      pointColor,
+      map,
+      country
+    } = this.props;
+    const rootUrl = country === 'cn' ? 'http://maps.google.cn' : 'https://maps.googleapis.com';
     return (
       <GoogleMap
-        googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBISa-Ul-NOnD-H5lweC_w4evLmV_0fuSU"
+        googleMapURL={`${rootUrl}/maps/api/js?v=3.exp&key=AIzaSyBISa-Ul-NOnD-H5lweC_w4evLmV_0fuSU`}
         loadingElement={<div style={{ height: '100%' }} />}
         containerElement={<div id="map-container" />}
         mapElement={<div id="map" />}
@@ -67,6 +78,7 @@ class GoogleMapWrapper extends Component {
   }
 }
 GoogleMapWrapper.propTypes = {
+  country: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
   routes: PropTypes.arrayOf(PropTypes.array),
   sectors: PropTypes.arrayOf(PropTypes.array).isRequired,
@@ -83,6 +95,7 @@ GoogleMapWrapper.defaultProps = { map: null, routes: null };
 
 function mapStateToProps(state) {
   return {
+    country: state.country,
     routes: getRoutes(state).routes,
     sectors: getSectors(state),
     airports: getAirports(state),
